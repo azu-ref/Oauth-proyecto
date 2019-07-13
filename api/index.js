@@ -17,7 +17,18 @@ app.post("/api/auth/token", function( req, res ) {
         name
     },
     config.authJwtSecret); //creamos el token. sign = firmar
-    res.json({ acces_token: token });
+    res.json({ access_token: token });
+});
+
+app.get("/api/auth/verify", function (req, res, next) {
+    const { access_token } = req.query;
+
+    try {
+        const decoded = jwt.verify(access_token, config.authJwtSecret);
+        res.json({message: "The acces token is valid", username: decoded.sub})
+    } catch (error) {
+        next(error);
+    }
 });
 
 const server = app.listen('5000', () => {
